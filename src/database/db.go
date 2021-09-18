@@ -7,8 +7,12 @@ import (
 	"gorm.io/gorm"
 )
 
+var DB *gorm.DB
+
 func Connect() *gorm.DB {
-	DB, err := gorm.Open(postgres.Open("postgres://postgres:postgres@db:5432/postgres?sslmode=disable"), &gorm.Config{})
+	var err error
+
+	DB, err = gorm.Open(postgres.Open("postgres://postgres:postgres@db:5432/postgres?sslmode=disable"), &gorm.Config{})
 
 	if err != nil {
 		panic("Could not connect with database!")
