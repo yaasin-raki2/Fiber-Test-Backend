@@ -1,0 +1,19 @@
+services:
+  backend:
+    build: .
+    ports:
+      - 8000:3000
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+  db:
+    image: postgres
+    container_name: postgresdb
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+      #- ./db-initial:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5437:5432"
