@@ -31,7 +31,7 @@ while [ -n "$1" ] ; do
         done
     elif [[ " ${CMDS[*]} " =~ " $1 " ]]; then
         echo -e "${PURPLE}Running $1 ...${RESET}"
-        $(docker compose exec backend /bin/bash -c "go run src/commands/src/$1.go")
+        $(docker compose exec backend /bin/bash -c "go run src/commands/src/$1/$1.go")
         echo -e "${CYAN}Command $1 executed successfully${RESET}"
     else
         echo -e "${RED}fuck u${RESET}"
