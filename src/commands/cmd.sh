@@ -14,17 +14,19 @@ if [ $# -eq 0 ] ; then
     exit 1
 fi
 
-CMDS=("populateUsers")
+declare -a CMDS
+i=0
+for f in $(ls src/) ; do
+    CMDS[i]="$(basename src/$f .go)"
+    (( i++ ))
+done
+
 while [ -n "$1" ] ; do 
     if [ "$1" == "--help" ] || [ "$1" == "-h" ] ; then
         echo -e "${RED}Available Commands:${RESET}"
         C=0
         while [ "$C" -lt "${#CMDS[@]}" ] ; do
-            if [ ! "$C" -eq  $(expr ${#CMDS[@]} - 1) ] ; then
-                echo -e "${UNDERSCORE}${ITALY}${WHITE}\t${CMDS[$C]%?}"
-            else
-                echo -e "${UNDERSCORE}${ITALY}${WHITE}\t${CMDS[$C]}${RESET}" 
-            fi
+            echo -e "${UNDERSCORE}${ITALY}${WHITE}\t${CMDS[$C]}${RESET}" 
             (( C++ ))
         done
     elif [[ " ${CMDS[*]} " =~ " $1 " ]]; then
