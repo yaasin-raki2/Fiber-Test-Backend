@@ -4,7 +4,9 @@ import (
 	"ambassador/src/database"
 	"ambassador/src/middlewares"
 	"ambassador/src/models"
+	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -25,11 +27,13 @@ func Register(c *fiber.Ctx) error {
 		})
 	}
 
+	fmt.Printf("%s", c.Path())
+
 	user := models.User{
 		FirstName:    data["first_name"],
 		LastName:     data["last_name"],
 		Email:        data["email"],
-		IsAmbassador: false,
+		IsAmbassador: strings.Contains(c.Path(), "/api/ambassador"),
 	}
 
 	user.SetPassword(data["password"])
