@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -94,4 +95,40 @@ func ProductsFrontend(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(&products)
+}
+
+func ProductsBackend(c *fiber.Ctx) error {
+	var products []models.Product
+	var ctx = context.Background()
+
+	result, err := database.Cache.Get(ctx, "products_backend").Result()
+
+	if err != nil {
+		database.DB.Find(&products)
+
+		bytes, _ := json.Marshal(products)
+
+		database.Cache.Set(ctx, "products_backend", bytes, 30*time.Minute)
+	} else {
+		json.Unmarshal([]byte(result), &products)
+	}
+
+	var searchedProducts []models.Product
+
+	if s := c.Query("s"); s != "" {
+		lowerS := strings.ToLower(s)
+
+		for _, product := range products {
+			lowerT := strings.ToLower(product.Title)
+			lowerD := strings.ToLower(product.Description)
+
+			if strings.Contains(lowerT, lowerS) || strings.Contains(lowerD, lowerS) {
+				searchedProducts = append(searchedProducts, product)
+			}
+		}
+	} else {
+		return c.JSON(&products)
+	}
+
+	return c.JSON(&searchedProducts)
 }
