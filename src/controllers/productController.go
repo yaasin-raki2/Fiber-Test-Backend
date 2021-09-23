@@ -5,6 +5,7 @@ import (
 	"ambassador/src/models"
 	"context"
 	"encoding/json"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -127,8 +128,46 @@ func ProductsBackend(c *fiber.Ctx) error {
 			}
 		}
 	} else {
-		return c.JSON(&products)
+		searchedProducts = products
 	}
 
-	return c.JSON(&searchedProducts)
+	if sortParam := c.Query("sort"); sortParam != "" {
+		sortLower := strings.ToLower(sortParam)
+		if sortLower == "asc" {
+			sort.Slice(searchedProducts, func(i, j int) bool {
+				return searchedProducts[i].Price < searchedProducts[j].Price
+			})
+		} else if sortLower == "desc" {
+			sort.Slice(searchedProducts, func(i, j int) bool {
+				return searchedProducts[i].Price > searchedProducts[j].Price
+			})
+		}
+	}
+
+	total := len(searchedProducts)
+	page, _ := strconv.Atoi(c.Query("page", "1"))
+	perpage := 9
+
+	if page < 1 {
+		page = 1
+	} else if page > total/perpage+1 {
+		page = total/perpage + 1
+	}
+
+	var data []models.Product
+
+	if total <= page*perpage && total >= (page-1)*perpage {
+		data = searchedProducts[(page-1)*perpage : total]
+	} else if total >= page*perpage {
+		data = searchedProducts[(page-1)*perpage : page*perpage]
+	} else {
+		data = []models.Product{}
+	}
+
+	return c.JSON(fiber.Map{
+		"data":      data,
+		"total":     total,
+		"page":      page,
+		"last_page": total/perpage + 1,
+	})
 }
