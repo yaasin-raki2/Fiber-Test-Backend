@@ -6,6 +6,8 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
+type RedisZ = redis.Z
+
 var Cache *redis.Client
 var CacheChannel chan string
 
