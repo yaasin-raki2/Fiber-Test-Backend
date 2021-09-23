@@ -42,6 +42,8 @@ func GetProduct(c *fiber.Ctx) error {
 
 	database.DB.Find(&product)
 
+	go database.ClearCache("products_frontend", "products_backend")
+
 	return c.JSON(product)
 }
 
@@ -57,6 +59,8 @@ func UpdateProduct(c *fiber.Ctx) error {
 	}
 
 	database.DB.Model(&product).Updates(&product).Find(&product)
+
+	go database.ClearCache("products_frontend", "products_backend")
 
 	return c.JSON(product)
 }
