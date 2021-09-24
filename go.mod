@@ -5,11 +5,12 @@ go 1.17
 require (
 	github.com/bxcodec/faker/v3 v3.6.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-redis/redis/v8 v8.11.3
 	github.com/gofiber/fiber/v2 v2.18.0
 	golang.org/x/crypto v0.0.0-20210915214749-c084706c2272
 	gorm.io/driver/postgres v1.1.1
 	gorm.io/gorm v1.21.15
-	github.com/go-redis/redis/v8 v8.11.3
+	github.com/stripe/stripe-go v70.15.0+incompatible
 )
 
 require (
